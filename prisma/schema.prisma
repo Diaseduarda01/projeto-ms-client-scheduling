@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id           String           @id @default(uuid())
+  googleId     String           @unique
+  email        String           @unique
+  nome         String
+  fotoPerfil   String?
+  telefone     String?
+  criadoEm     DateTime         @default(now())
+  atualizadoEm DateTime         @updatedAt
+  sessions     BookingSession[]
+
+  @@index([googleId])
+  @@index([email])
+}
+
+model BookingSession {
+  id               String        @id @default(uuid())
+  clienteId        String
+  cliente          Cliente       @relation(fields: [clienteId], references: [id])
+  empresaId        String
+  empresaSlug      String
+  servicoId        String
+  servicoNome      String
+  servicoPreco     Decimal       @db.Decimal(10, 2)
+  funcionarioId    String?
+  funcionarioNome  String?
+  dataHoraInicio   DateTime
+  dataHoraFim      DateTime
+  status           BookingStatus @default(RASCUNHO)
+  valorGarantia    Decimal?      @db.Decimal(10, 2)
+  pixCobrancaId    String?
+  pixQrCode        String?       @db.Text
+  pixQrCodeBase64  String?       @db.Text
+  pixExpiracao     DateTime?
+  agendamentoErpId String?
+  cancelToken      String        @unique @default(uuid())
+  criadaEm         DateTime      @default(now())
+  atualizadaEm     DateTime      @updatedAt
+  expiraEm         DateTime?
+
+  @@index([clienteId])
+  @@index([empresaSlug])
+  @@index([pixCobrancaId])
+  @@index([cancelToken])
+  @@index([status, expiraEm])
+}
+
+enum BookingStatus {
+  RASCUNHO
+  AGUARDANDO_PAGAMENTO
+  CONFIRMADO
+  EXPIRADO
+  CANCELADO
+  CONCLUIDO
+}
