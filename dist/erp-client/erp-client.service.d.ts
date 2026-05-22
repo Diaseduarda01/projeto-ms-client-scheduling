@@ -28,6 +28,15 @@ export interface Empresa {
     nome: string;
     plano: 'BASIC' | 'BRONZE' | 'PLATINUM' | 'GOLD';
 }
+export interface EmpresaPublic {
+    id: string;
+    nome: string;
+    slug: string;
+    logoUrl?: string;
+    endereco?: string;
+    telefone?: string;
+    horarioFuncionamento?: string;
+}
 export interface CreateAgendamentoDto {
     empresaId: string;
     servicoId: string;
@@ -42,6 +51,7 @@ export declare class ErpClientService {
     private readonly http;
     constructor(http: HttpService);
     getEmpresaBySlug(slug: string): Promise<Empresa>;
+    getEmpresaPublic(slug: string): Promise<EmpresaPublic>;
     getServicos(slug: string): Promise<Servico[]>;
     getProfissionais(slug: string, servicoId?: string): Promise<Profissional[]>;
     getDisponibilidade(slug: string, servicoId: string, data: string, funcionarioId?: string): Promise<Disponibilidade>;

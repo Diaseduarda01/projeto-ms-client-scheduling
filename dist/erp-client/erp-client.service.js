@@ -30,6 +30,18 @@ let ErpClientService = class ErpClientService {
             throw error;
         }
     }
+    async getEmpresaPublic(slug) {
+        try {
+            const { data } = await (0, rxjs_1.firstValueFrom)(this.http.get(`/public/${slug}`));
+            return data;
+        }
+        catch (error) {
+            if (error.response?.status === 404) {
+                throw new common_1.NotFoundException(`Empresa não encontrada: ${slug}`);
+            }
+            throw error;
+        }
+    }
     async getServicos(slug) {
         const { data } = await (0, rxjs_1.firstValueFrom)(this.http.get(`/public/${slug}/servicos`));
         return data;

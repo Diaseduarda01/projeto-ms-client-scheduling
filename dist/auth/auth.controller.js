@@ -33,8 +33,8 @@ let AuthController = class AuthController {
         const token = this.authService.generateToken(cliente);
         const cookieOptions = this.authService.getCookieOptions();
         res.cookie('access_token', token, cookieOptions);
-        const redirectUrl = cliente.precisaOnboarding ? '/onboarding' : '/';
-        res.redirect(redirectUrl);
+        const path = cliente.precisaOnboarding ? '/onboarding' : '/';
+        res.redirect(path);
     }
     getProfile(req) {
         const user = req.user;

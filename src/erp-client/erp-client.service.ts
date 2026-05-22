@@ -36,6 +36,16 @@ export interface Empresa {
   plano: 'BASIC' | 'BRONZE' | 'PLATINUM' | 'GOLD';
 }
 
+export interface EmpresaPublic {
+  id: string;
+  nome: string;
+  slug: string;
+  logoUrl?: string;
+  endereco?: string;
+  telefone?: string;
+  horarioFuncionamento?: string;
+}
+
 export interface CreateAgendamentoDto {
   empresaId: string;
   servicoId: string;
@@ -55,6 +65,20 @@ export class ErpClientService {
     try {
       const { data } = await firstValueFrom(
         this.http.get<Empresa>(`/internal/empresas/slug/${slug}`),
+      );
+      return data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        throw new NotFoundException(`Empresa não encontrada: ${slug}`);
+      }
+      throw error;
+    }
+  }
+
+  async getEmpresaPublic(slug: string): Promise<EmpresaPublic> {
+    try {
+      const { data } = await firstValueFrom(
+        this.http.get<EmpresaPublic>(`/public/${slug}`),
       );
       return data;
     } catch (error: any) {

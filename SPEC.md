@@ -494,24 +494,24 @@ CANCELAMENTO_ANTECEDENCIA_HORAS=2
 - [x] `GET /auth/me` + `POST /auth/logout`
 - [x] `PATCH /clientes/me/telefone` — onboarding de telefone
 
-### Fase 3 — Catálogo e Agendamento
-- [ ] `GET /catalog/:slug/servicos` — proxy ms-erp-api
-- [ ] `GET /catalog/:slug/profissionais`
-- [ ] `GET /catalog/:slug/disponibilidade`
-- [ ] `POST /book/:slug/sessao` — requer JWT; usa dados do `Cliente` logado
-- [ ] `POST /book/:slug/sessao/:sessionId/confirmar` — Bronze
-- [ ] `GET /book/:slug/sessao/:sessionId` — polling de status
-- [ ] `GET /clientes/me/agendamentos`
+### Fase 3 — Catálogo e Agendamento ✅
+- [x] `GET /catalog/:slug/servicos` — proxy ms-erp-api
+- [x] `GET /catalog/:slug/profissionais`
+- [x] `GET /catalog/:slug/disponibilidade`
+- [x] `POST /book/:slug/sessao` — requer JWT; usa dados do `Cliente` logado
+- [x] `POST /book/:slug/sessao/:sessionId/confirmar` — Bronze
+- [x] `GET /book/:slug/sessao/:sessionId` — polling de status
+- [x] `GET /clientes/me/agendamentos`
 
-### Fase 4 — Pagamento (Platinum+)
-- [ ] `PaymentService` — chama ms-financeiro para gerar Pix
-- [ ] `POST /book/:slug/sessao/:sessionId/pix`
-- [ ] `POST /webhook/pagamento` — recebe AbacatePay, valida HMAC, confirma sessão
-- [ ] Cron job de expiração de sessões (a cada 5 min)
+### Fase 4 — Pagamento (Platinum+) ✅
+- [x] `PaymentService` — chama ms-financeiro para gerar Pix
+- [x] `POST /book/:slug/sessao/:sessionId/pix`
+- [x] `POST /webhook/pagamento` — recebe AbacatePay, valida HMAC, confirma sessão
+- [x] Cron job de expiração de sessões (a cada 5 min)
 
-### Fase 5 — Cancelamento e Notificações
-- [ ] `DELETE /book/cancelar/:cancelToken` — cancelamento público por link
-- [ ] `NotificationsService` publicando eventos no RabbitMQ
+### Fase 5 — Cancelamento e Notificações ✅
+- [x] `DELETE /book/cancelar/:cancelToken` — cancelamento público por link
+- [x] `NotificationsService` publicando eventos no RabbitMQ
 
 ### Fase 6 — Qualidade
 - [ ] Testes unitários: `AuthService`, `BookingService`, `PaymentService`

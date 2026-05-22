@@ -42,8 +42,8 @@ export class AuthController {
 
     res.cookie('access_token', token, cookieOptions);
 
-    const redirectUrl = cliente.precisaOnboarding ? '/onboarding' : '/';
-    res.redirect(redirectUrl);
+    const path = cliente.precisaOnboarding ? '/onboarding' : '/';
+    res.redirect(path);
   }
 
   @Get('me')

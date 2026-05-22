@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { join } from 'path';
 import { HealthModule } from './health/health.module';
 import { ErpClientModule } from './erp-client/erp-client.module';
 import { AuthModule } from './auth/auth.module';
 import { ClienteModule } from './cliente/cliente.module';
+import { CatalogModule } from './catalog/catalog.module';
+import { BookingModule } from './booking/booking.module';
+import { PaymentModule } from './payment/payment.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaService } from './prisma.service';
 
 @Module({
@@ -12,6 +18,10 @@ import { PrismaService } from './prisma.service';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env', '.env.example'],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client', 'dist'),
+      exclude: ['/api{/*path}', '/auth{/*path}', '/health', '/catalog{/*path}', '/book{/*path}', '/clientes{/*path}', '/webhook{/*path}'],
     }),
     ThrottlerModule.forRoot([
       {
@@ -34,6 +44,10 @@ import { PrismaService } from './prisma.service';
     ErpClientModule,
     AuthModule,
     ClienteModule,
+    CatalogModule,
+    BookingModule,
+    PaymentModule,
+    NotificationsModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
