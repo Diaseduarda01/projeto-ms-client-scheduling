@@ -40,5 +40,11 @@ export declare class BookingController {
         sessionId: string;
         status: import("@prisma/client").$Enums.BookingStatus;
         cancelToken: string;
+        resumo: {
+            servico: string;
+            profissional: string;
+            dataHora: string;
+            valorTotal: string;
+        };
     }>;
 }

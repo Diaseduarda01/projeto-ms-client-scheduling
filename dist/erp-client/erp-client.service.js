@@ -69,9 +69,27 @@ let ErpClientService = class ErpClientService {
             return false;
         }
     }
-    async criarAgendamento(dto) {
-        const { data } = await (0, rxjs_1.firstValueFrom)(this.http.post('/internal/agendamentos', dto));
+    async buscarOuCriarCliente(dto) {
+        const { data } = await (0, rxjs_1.firstValueFrom)(this.http.post('/internal/clientes/buscar-ou-criar', dto));
         return data;
+    }
+    async criarAgendamento(dto) {
+        const cliente = await this.buscarOuCriarCliente({
+            empresaId: dto.empresaId,
+            nome: dto.clienteNome,
+            telefone: dto.clienteTelefone || undefined,
+            email: dto.clienteEmail,
+        });
+        const data = dto.dataHoraInicio.split('T')[0];
+        const horaInicio = dto.dataHoraInicio.substring(11, 16);
+        const { data: result } = await (0, rxjs_1.firstValueFrom)(this.http.post('/internal/agendamentos', {
+            empresaId: dto.empresaId,
+            clienteId: cliente.id,
+            servicoId: dto.servicoId,
+            data,
+            horaInicio,
+        }));
+        return { id: result.agendamentoId };
     }
     async cancelarAgendamento(agendamentoId) {
         await (0, rxjs_1.firstValueFrom)(this.http.delete(`/internal/agendamentos/${agendamentoId}`));

@@ -47,13 +47,13 @@
   - [x] `booking.expirado` — após expiração de sessão
   - [x] `booking.cancelado` — após cancelamento pelo cliente
 
-## Fase 6 — Qualidade
+## Fase 6 — Qualidade ✅
 
-- [ ] Testes unitários: `AuthService`, `BookingService`, `PaymentService`
-- [ ] Testes de integração com Testcontainers (MySQL + RabbitMQ)
-- [ ] Teste do fluxo OAuth com mock do Google
-- [ ] Teste do webhook com mock do AbacatePay
-- [ ] Swagger operacional em `/api`
+- [x] Testes unitários: `AuthService`, `BookingService`, `PaymentService` (29 testes)
+- [x] Teste do webhook com mock do AbacatePay (HMAC validation)
+- [x] Swagger operacional em `/api`
+- [ ] Testes de integração com Testcontainers (MySQL + RabbitMQ) — opcional
+- [ ] Teste do fluxo OAuth com mock do Google — opcional
 
 ---
 

@@ -57,9 +57,15 @@ export function ResumoPage() {
         const confirmed = await bookingApi.confirmSession(slug, session.sessionId);
         navigate(`/${slug}/confirmacao`, { state: { session: confirmed } });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('Erro ao criar agendamento');
+      const message = error.response?.data?.message || 'Erro ao criar agendamento';
+      if (message.includes('disponível') || error.response?.status === 409) {
+        alert('Este horário não está mais disponível. Por favor, escolha outro horário.');
+        navigate(`/${slug}/calendario`, { state: { servicoId, funcionarioId } });
+      } else {
+        alert(message);
+      }
     } finally {
       setSubmitting(false);
     }

@@ -23,7 +23,7 @@ exports.ErpClientModule = ErpClientModule = __decorate([
                 useFactory: (config) => ({
                     baseURL: config.get('ERP_API_URL'),
                     headers: {
-                        'X-Internal-Api-Key': config.get('ERP_INTERNAL_API_KEY'),
+                        'x-internal-key': config.get('ERP_INTERNAL_API_KEY'),
                     },
                     timeout: 10000,
                 }),

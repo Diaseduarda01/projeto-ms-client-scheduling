@@ -57,6 +57,13 @@ export interface CreateAgendamentoDto {
   dataHoraFim: string;
 }
 
+export interface BuscarOuCriarClienteDto {
+  empresaId: string;
+  nome: string;
+  telefone?: string;
+  email?: string;
+}
+
 @Injectable()
 export class ErpClientService {
   constructor(private readonly http: HttpService) {}
@@ -138,11 +145,34 @@ export class ErpClientService {
     }
   }
 
-  async criarAgendamento(dto: CreateAgendamentoDto): Promise<{ id: string }> {
+  async buscarOuCriarCliente(dto: BuscarOuCriarClienteDto): Promise<{ id: string }> {
     const { data } = await firstValueFrom(
-      this.http.post<{ id: string }>('/internal/agendamentos', dto),
+      this.http.post<{ id: string }>('/internal/clientes/buscar-ou-criar', dto),
     );
     return data;
+  }
+
+  async criarAgendamento(dto: CreateAgendamentoDto): Promise<{ id: string }> {
+    const cliente = await this.buscarOuCriarCliente({
+      empresaId: dto.empresaId,
+      nome: dto.clienteNome,
+      telefone: dto.clienteTelefone || undefined,
+      email: dto.clienteEmail,
+    });
+
+    const data = dto.dataHoraInicio.split('T')[0];
+    const horaInicio = dto.dataHoraInicio.substring(11, 16);
+
+    const { data: result } = await firstValueFrom(
+      this.http.post<{ agendamentoId: string; confirmacao: string; cancelToken: string }>('/internal/agendamentos', {
+        empresaId: dto.empresaId,
+        clienteId: cliente.id,
+        servicoId: dto.servicoId,
+        data,
+        horaInicio,
+      }),
+    );
+    return { id: result.agendamentoId };
   }
 
   async cancelarAgendamento(agendamentoId: string): Promise<void> {

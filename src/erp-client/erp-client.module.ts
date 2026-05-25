@@ -11,7 +11,7 @@ import { ErpClientService } from './erp-client.service';
       useFactory: (config: ConfigService) => ({
         baseURL: config.get<string>('ERP_API_URL'),
         headers: {
-          'X-Internal-Api-Key': config.get<string>('ERP_INTERNAL_API_KEY'),
+          'x-internal-key': config.get<string>('ERP_INTERNAL_API_KEY'),
         },
         timeout: 10000,
       }),

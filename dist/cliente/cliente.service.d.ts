@@ -4,8 +4,8 @@ export declare class ClienteService {
     constructor(prisma: PrismaService);
     updateTelefone(clienteId: string, telefone: string): Promise<{
         precisaOnboarding: boolean;
-        email: string;
         id: string;
+        email: string;
         nome: string;
         fotoPerfil: string | null;
         telefone: string | null;
@@ -19,8 +19,8 @@ export declare class ClienteService {
         cancelToken: string | null;
     }[]>;
     findById(id: string): Promise<{
-        email: string;
         id: string;
+        email: string;
         nome: string;
         fotoPerfil: string | null;
         telefone: string | null;

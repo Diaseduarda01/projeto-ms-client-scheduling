@@ -47,6 +47,12 @@ export interface CreateAgendamentoDto {
     dataHoraInicio: string;
     dataHoraFim: string;
 }
+export interface BuscarOuCriarClienteDto {
+    empresaId: string;
+    nome: string;
+    telefone?: string;
+    email?: string;
+}
 export declare class ErpClientService {
     private readonly http;
     constructor(http: HttpService);
@@ -56,6 +62,9 @@ export declare class ErpClientService {
     getProfissionais(slug: string, servicoId?: string): Promise<Profissional[]>;
     getDisponibilidade(slug: string, servicoId: string, data: string, funcionarioId?: string): Promise<Disponibilidade>;
     verificarDisponibilidade(empresaId: string, servicoId: string, funcionarioId: string | null, dataHoraInicio: string, dataHoraFim: string): Promise<boolean>;
+    buscarOuCriarCliente(dto: BuscarOuCriarClienteDto): Promise<{
+        id: string;
+    }>;
     criarAgendamento(dto: CreateAgendamentoDto): Promise<{
         id: string;
     }>;

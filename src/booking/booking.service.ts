@@ -76,7 +76,7 @@ export class BookingService {
       resumo: {
         servico: servico.nome,
         profissional: funcionarioNome || 'Qualquer disponível',
-        dataHora: dataHoraInicio.toISOString(),
+        dataHora: this.toSP(dataHoraInicio),
         valorTotal: servico.preco,
         valorGarantia: valorGarantia?.toString() || null,
         cliente: {
@@ -102,7 +102,7 @@ export class BookingService {
       resumo: {
         servico: session.servicoNome,
         profissional: session.funcionarioNome || 'Qualquer disponível',
-        dataHora: session.dataHoraInicio.toISOString(),
+        dataHora: this.toSP(session.dataHoraInicio),
         valorTotal: session.servicoPreco.toString(),
         valorGarantia: session.valorGarantia?.toString() || null,
       },
@@ -137,12 +137,17 @@ export class BookingService {
       throw new BadRequestException('Este plano requer pagamento antecipado');
     }
 
+    const formatLocal = (d: Date) => {
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+    };
+
     const disponivel = await this.erpClient.verificarDisponibilidade(
       session.empresaId,
       session.servicoId,
       session.funcionarioId,
-      session.dataHoraInicio.toISOString(),
-      session.dataHoraFim.toISOString(),
+      formatLocal(session.dataHoraInicio),
+      formatLocal(session.dataHoraFim),
     );
 
     if (!disponivel) {
@@ -156,8 +161,8 @@ export class BookingService {
       clienteNome: session.cliente.nome,
       clienteEmail: session.cliente.email,
       clienteTelefone: session.cliente.telefone || '',
-      dataHoraInicio: session.dataHoraInicio.toISOString(),
-      dataHoraFim: session.dataHoraFim.toISOString(),
+      dataHoraInicio: formatLocal(session.dataHoraInicio),
+      dataHoraFim: formatLocal(session.dataHoraFim),
     });
 
     const updated = await this.prisma.bookingSession.update({
@@ -174,7 +179,7 @@ export class BookingService {
       clienteTelefone: session.cliente.telefone || '',
       clienteEmail: session.cliente.email,
       servicoNome: session.servicoNome,
-      dataHora: session.dataHoraInicio.toISOString(),
+      dataHora: this.toSP(session.dataHoraInicio),
       cancelToken: updated.cancelToken,
       empresaId: session.empresaId,
       empresaSlug: session.empresaSlug,
@@ -184,7 +189,19 @@ export class BookingService {
       sessionId: updated.id,
       status: updated.status,
       cancelToken: updated.cancelToken,
+      resumo: {
+        servico: session.servicoNome,
+        profissional: session.funcionarioNome || 'Qualquer disponível',
+        dataHora: this.toSP(session.dataHoraInicio),
+        valorTotal: session.servicoPreco.toString(),
+      },
     };
+  }
+
+  private toSP(d: Date): string {
+    const sp = new Date(d.getTime() - 3 * 3600_000);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${sp.getUTCFullYear()}-${pad(sp.getUTCMonth() + 1)}-${pad(sp.getUTCDate())}T${pad(sp.getUTCHours())}:${pad(sp.getUTCMinutes())}:00`;
   }
 
   private calcularGarantia(servico: Servico, plano: string): number | null {

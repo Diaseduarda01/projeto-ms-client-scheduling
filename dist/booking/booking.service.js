@@ -65,7 +65,7 @@ let BookingService = class BookingService {
             resumo: {
                 servico: servico.nome,
                 profissional: funcionarioNome || 'Qualquer disponível',
-                dataHora: dataHoraInicio.toISOString(),
+                dataHora: this.toSP(dataHoraInicio),
                 valorTotal: servico.preco,
                 valorGarantia: valorGarantia?.toString() || null,
                 cliente: {
@@ -88,7 +88,7 @@ let BookingService = class BookingService {
             resumo: {
                 servico: session.servicoNome,
                 profissional: session.funcionarioNome || 'Qualquer disponível',
-                dataHora: session.dataHoraInicio.toISOString(),
+                dataHora: this.toSP(session.dataHoraInicio),
                 valorTotal: session.servicoPreco.toString(),
                 valorGarantia: session.valorGarantia?.toString() || null,
             },
@@ -117,7 +117,11 @@ let BookingService = class BookingService {
         if (empresa.plano !== 'BASIC' && empresa.plano !== 'BRONZE') {
             throw new common_1.BadRequestException('Este plano requer pagamento antecipado');
         }
-        const disponivel = await this.erpClient.verificarDisponibilidade(session.empresaId, session.servicoId, session.funcionarioId, session.dataHoraInicio.toISOString(), session.dataHoraFim.toISOString());
+        const formatLocal = (d) => {
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+        };
+        const disponivel = await this.erpClient.verificarDisponibilidade(session.empresaId, session.servicoId, session.funcionarioId, formatLocal(session.dataHoraInicio), formatLocal(session.dataHoraFim));
         if (!disponivel) {
             throw new common_1.ConflictException('Horário não está mais disponível');
         }
@@ -128,8 +132,8 @@ let BookingService = class BookingService {
             clienteNome: session.cliente.nome,
             clienteEmail: session.cliente.email,
             clienteTelefone: session.cliente.telefone || '',
-            dataHoraInicio: session.dataHoraInicio.toISOString(),
-            dataHoraFim: session.dataHoraFim.toISOString(),
+            dataHoraInicio: formatLocal(session.dataHoraInicio),
+            dataHoraFim: formatLocal(session.dataHoraFim),
         });
         const updated = await this.prisma.bookingSession.update({
             where: { id: sessionId },
@@ -144,7 +148,7 @@ let BookingService = class BookingService {
             clienteTelefone: session.cliente.telefone || '',
             clienteEmail: session.cliente.email,
             servicoNome: session.servicoNome,
-            dataHora: session.dataHoraInicio.toISOString(),
+            dataHora: this.toSP(session.dataHoraInicio),
             cancelToken: updated.cancelToken,
             empresaId: session.empresaId,
             empresaSlug: session.empresaSlug,
@@ -153,7 +157,18 @@ let BookingService = class BookingService {
             sessionId: updated.id,
             status: updated.status,
             cancelToken: updated.cancelToken,
+            resumo: {
+                servico: session.servicoNome,
+                profissional: session.funcionarioNome || 'Qualquer disponível',
+                dataHora: this.toSP(session.dataHoraInicio),
+                valorTotal: session.servicoPreco.toString(),
+            },
         };
+    }
+    toSP(d) {
+        const sp = new Date(d.getTime() - 3 * 3600_000);
+        const pad = (n) => n.toString().padStart(2, '0');
+        return `${sp.getUTCFullYear()}-${pad(sp.getUTCMonth() + 1)}-${pad(sp.getUTCDate())}T${pad(sp.getUTCHours())}:${pad(sp.getUTCMinutes())}:00`;
     }
     calcularGarantia(servico, plano) {
         if (plano === 'BASIC' || plano === 'BRONZE') {

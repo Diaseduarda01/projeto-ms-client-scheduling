@@ -6,16 +6,16 @@ export declare class ClienteController {
     constructor(clienteService: ClienteService);
     getProfile(req: Request): Promise<{
         precisaOnboarding: boolean;
-        email: string;
         id: string;
+        email: string;
         nome: string;
         fotoPerfil: string | null;
         telefone: string | null;
     }>;
     updateTelefone(req: Request, dto: UpdateTelefoneDto): Promise<{
         precisaOnboarding: boolean;
-        email: string;
         id: string;
+        email: string;
         nome: string;
         fotoPerfil: string | null;
         telefone: string | null;

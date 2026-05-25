@@ -54,7 +54,8 @@ export function CalendarioPage() {
 
     catalogApi
       .getDisponibilidade(slug!, servicoId, formatDate(selectedDate), funcionarioId)
-      .then((data) => setHorarios(data.horarios))
+      .then((data) => setHorarios(data?.horarios || []))
+      .catch(() => setHorarios([]))
       .finally(() => setLoading(false));
   }, [slug, servicoId, funcionarioId, selectedDate, navigate]);
 
